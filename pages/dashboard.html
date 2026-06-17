@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Grove</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+
+  <!-- ─── MOBILE OVERLAY ─── -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="dashboard">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3c.5 2 2.5 4 5 4 0 3-1 6-3 8l-2 2-2-2c-2-2-3-5-3-8 2.5 0 4.5-2 5-4z"/>
+        </svg>
+        <span>Grove</span>
+      </div>
+
+      <div class="sidebar-section">Views</div>
+      <nav class="sidebar-nav">
+        <a data-view="stats">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          <span>Statistics</span>
+        </a>        
+        <a data-view="templates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <span>Templates</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-section">Boards</div>
+      <div class="sidebar-nav" id="boardList"></div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" id="newBoardBtn" style="width:100%;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Board
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <main class="main">
+
+      <!-- ─── TOP BAR ─── -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+            </svg>
+          </button>
+          <h1 id="boardTitle">My Board</h1>
+          <button class="btn btn-icon" id="deleteBoardBtn" title="Delete board">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" id="addWidgetBtn">+ Add Widget</button>
+          <div class="user-area" id="userArea"></div>
+        </div>
+      </header>
+
+      <!-- ─── VIEW: BOARD ─── -->
+      <section id="view-board" class="view active">
+        <div class="board-view">
+          <div class="board-empty" id="boardEmpty" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <h3>No board selected</h3>
+            <p>Create a board to get started.</p>
+          </div>
+          <div class="widget-grid" id="widgetGrid"></div>
+        </div>
+      </section>
+
+      <!-- ─── VIEW: STATISTICS ─── -->
+      <section id="view-stats" class="view">
+        <div class="stats-view">
+          <div class="stats-header">
+            <h2>Statistics</h2>
+            <div class="stats-filter">
+              <select id="statsFilter">
+                <option value="__all">All Boards</option>
+              </select>
+            </div>
+          </div>
+          <div class="stats-grid" id="statsContainer"></div>
+        </div>
+      </section>
+
+      <!-- ─── VIEW: TEMPLATES ─── -->
+      <section id="view-templates" class="view">
+        <div class="templates-view">
+          <div class="templates-header">
+            <h2>Templates</h2>
+            <p>Choose a pre-built template to jumpstart your workspace</p>
+          </div>
+          <div class="templates-grid" id="templatesGrid"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══ MODAL: ADD WIDGET ═══ -->
+  <div class="modal-overlay" id="widgetPicker">
+    <div class="modal" style="max-width:460px;">
+      <h2>Add Widget</h2>
+      <div class="picker-grid">
+        <div class="picker-item" data-type="todo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>To Do</span>
+        </div>
+        <div class="picker-item" data-type="pomodoro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Pomodoro</span>
+        </div>
+        <div class="picker-item" data-type="notes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Notes</span>
+        </div>
+        <div class="picker-item" data-type="calendar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Calendar</span>
+        </div>
+        <div class="picker-item" data-type="habits">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Habits</span>
+        </div>
+        <div class="picker-item" data-type="focus-timer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+          <span>Focus Timer</span>
+        </div>
+        <div class="picker-item" data-type="links">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span>Links</span>
+        </div>
+        <div class="picker-item" data-type="text">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <span>Text</span>
+        </div>
+        <div class="picker-item" data-type="resources">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Resources</span>
+        </div>
+        <div class="picker-item" data-type="daily-goals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4m0 12v4M4 7l2 2m12 0l2-2M4 17l2-2m12 2l2 2"/><circle cx="12" cy="12" r="7"/></svg>
+          <span>Daily Goals</span>
+        </div>
+        <div class="picker-item" data-type="progress-tracker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Progress</span>
+        </div>
+        <div class="picker-item" data-type="image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Image</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: NEW BOARD ═══ -->
+  <div class="modal-overlay" id="newBoardModal">
+    <div class="modal">
+      <h2>New Board</h2>
+      <div class="form-group">
+        <label for="newBoardName">Board name</label>
+        <input type="text" id="newBoardName" placeholder="e.g. Work, Semester 2, Side Project" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="newBoardCancel">Cancel</button>
+        <button class="btn btn-primary" id="newBoardConfirm">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: POMODORO CONFIG ═══ -->
+  <div class="modal-overlay" id="pomodoroConfigModal">
+    <div class="modal" style="max-width:360px;">
+      <h2>Pomodoro Settings</h2>
+      <div class="form-group">
+        <label>Focus duration (minutes)</label>
+        <input type="number" id="pomoFocusDuration" value="25" min="1" max="120" />
+      </div>
+      <div class="form-group">
+        <label>Break duration (minutes)</label>
+        <input type="number" id="pomoBreakDuration" value="5" min="1" max="30" />
+      </div>
+      <div class="pomo-config-presets">
+        <button data-focus="25" data-break="5">Classic (25/5)</button>
+        <button data-focus="50" data-break="10">Long (50/10)</button>
+        <button data-focus="15" data-break="3">Quick (15/3)</button>
+        <button data-focus="90" data-break="20">Deep (90/20)</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="pomoConfigCancel">Cancel</button>
+        <button class="btn btn-primary" id="pomoConfigConfirm">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: BOARD CUSTOMIZE ═══ -->
+  <div class="modal-overlay" id="boardCustomizeModal">
+    <div class="modal" style="max-width:340px;">
+      <h2 id="boardCustomizeTitle">Customize Board</h2>
+      <div class="form-group">
+        <label>Theme Color</label>
+        <div class="color-picker" id="boardColorPicker">
+          <div class="color-swatch" style="background:#3b8c5a;" data-color="#3b8c5a"></div>
+          <div class="color-swatch" style="background:#3b82f6;" data-color="#3b82f6"></div>
+          <div class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6"></div>
+          <div class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b"></div>
+          <div class="color-swatch" style="background:#ef4444;" data-color="#ef4444"></div>
+          <div class="color-swatch" style="background:#ec4899;" data-color="#ec4899"></div>
+          <div class="color-swatch" style="background:#14b8a6;" data-color="#14b8a6"></div>
+          <div class="color-swatch" style="background:#f97316;" data-color="#f97316"></div>
+          <div class="color-swatch" style="background:#6366f1;" data-color="#6366f1"></div>
+          <div class="color-swatch" style="background:#84cc16;" data-color="#84cc16"></div>
+          <div class="color-swatch" style="background:#6b7280;" data-color="#6b7280"></div>
+          <div class="color-swatch" style="background:#a855f7;" data-color="#a855f7"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Board Icon</label>
+        <div class="color-picker" id="boardIconPicker">
+          <div class="board-icon-option active" data-icon="default">📋</div>
+          <div class="board-icon-option" data-icon="star">⭐</div>
+          <div class="board-icon-option" data-icon="heart">❤️</div>
+          <div class="board-icon-option" data-icon="rocket">🚀</div>
+          <div class="board-icon-option" data-icon="bulb">💡</div>
+          <div class="board-icon-option" data-icon="target">🎯</div>
+          <div class="board-icon-option" data-icon="book">✨</div>
+          <div class="board-icon-option" data-icon="code">💻</div>
+          <div class="board-icon-option" data-icon="palette">🎨</div>
+          <div class="board-icon-option" data-icon="music">🎵</div>
+          <div class="board-icon-option" data-icon="trophy">🏆</div>
+          <div class="board-icon-option" data-icon="globe">🪴</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="boardCustomizeCancel">Cancel</button>
+        <button class="btn btn-primary" id="boardCustomizeSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: CONFIRM ═══ -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal confirm-modal" style="max-width:380px;">
+      <p class="confirm-message" id="confirmMessage">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+        <button class="btn btn-primary confirm-delete" id="confirmOk">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: SETTINGS ═══ -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal" style="max-width:420px;">
+      <h2>Settings</h2>
+      <div class="form-group">
+        <label>Interface Theme</label>
+        <div class="theme-picker" id="themePicker">
+          <div class="theme-option" data-theme="default" style="--theme-bg:#3b8c5a;">
+            <span class="theme-swatch" style="background:#3b8c5a;"></span>
+            <span>Default</span>
+          </div>
+          <div class="theme-option" data-theme="forest" style="--theme-bg:#2d7d46;">
+            <span class="theme-swatch" style="background:#2d7d46;"></span>
+            <span>Forest</span>
+          </div>
+          <div class="theme-option" data-theme="ocean" style="--theme-bg:#2563eb;">
+            <span class="theme-swatch" style="background:#2563eb;"></span>
+            <span>Ocean</span>
+          </div>
+          <div class="theme-option" data-theme="sunset" style="--theme-bg:#d97706;">
+            <span class="theme-swatch" style="background:#d97706;"></span>
+            <span>Sunset</span>
+          </div>
+          <div class="theme-option" data-theme="lavender" style="--theme-bg:#7c3aed;">
+            <span class="theme-swatch" style="background:#7c3aed;"></span>
+            <span>Lavender</span>
+          </div>
+          <div class="theme-option" data-theme="rose" style="--theme-bg:#e11d48;">
+            <span class="theme-swatch" style="background:#e11d48;"></span>
+            <span>Rose</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Default Focus Duration (min)</label>
+        <input type="number" id="settingsDefaultFocus" value="25" min="1" max="120" />
+      </div>
+      <div class="form-group">
+        <label>Default Break Duration (min)</label>
+        <input type="number" id="settingsDefaultBreak" value="5" min="1" max="30" />
+      </div>
+      <div class="settings-section">
+        <label style="font-size:13px;font-weight:500;color:var(--text-secondary);">Data</label>
+        <div class="settings-data-actions">
+          <button class="btn btn-ghost btn-sm" id="exportDataBtn">Export Data</button>
+          <button class="btn btn-ghost btn-sm" id="importDataBtn">Import Data</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="settingsCancel">Cancel</button>
+        <button class="btn btn-primary" id="settingsConfirm">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BOARD CONTEXT MENU ═══ -->
+  <div class="board-context-menu" id="boardContextMenu">
+    <div class="board-context-item" data-action="rename">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Rename</div>
+    <div class="board-context-item" data-action="color">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      Change Color</div>
+    <div class="board-context-item" data-action="icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      Change Icon</div>
+    <div class="board-context-item danger" data-action="delete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Delete</div>
+  </div>
+
+  <!-- ═══ CALENDAR EVENT POPUP ═══ -->
+  <div class="calendar-event-popup" id="calendarEventPopup" style="display:none;"></div>
+
+  <!-- ═══ MODAL: AI WORKSPACE GENERATOR (COMING SOON) ═══ -->
+  <div class="modal-overlay" id="aiWorkspaceModal">
+    <div class="modal ai-modal" style="max-width:420px;">
+      <div class="ai-modal-glow"></div>
+      <div class="ai-modal-body">
+        <div class="ai-modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 6 6 0 1 1-9 9 6 6 0 0 0-9-9 6 6 0 0 1 9-9Z"/>
+            <path d="M19 5v4m-2-2h4"/>
+            <path d="M5 17v2m-1-1h2"/>
+            <path d="M18 18v1"/>
+            <path d="M14 10l-2 2 2 2"/>
+            <path d="M10 14l2 2"/>
+          </svg>
+        </div>
+        <span class="soon-badge soon-badge--lg">Coming Soon</span>
+        <h2 class="ai-modal-title">AI Workspace Generator</h2>
+        <p class="ai-modal-desc">Describe what you're working on and Grove will automatically create a personalized board, widgets, tasks, study sessions, and workspace structure tailored to your goals.</p>
+        <button class="btn btn-primary" id="aiWorkspaceClose">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/services/storage-service.js"></script>
+  <script src="../js/services/auth-service.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>

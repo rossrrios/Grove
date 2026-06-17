@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in — Grove</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3c.5 2 2.5 4 5 4 0 3-1 6-3 8l-2 2-2-2c-2-2-3-5-3-8 2.5 0 4.5-2 5-4z"/>
+        </svg>
+        Grove
+      </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Log in to your Grove workspace.</p>
+
+      <div class="auth-alert" id="alertBox"></div>
+
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+          <div class="field-error" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="field-wrapper">
+            <input type="password" id="password" placeholder="Your password" autocomplete="current-password" />
+            <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1" aria-label="Toggle password visibility">Show</button>
+          </div>
+          <div class="field-error" id="passwordError"></div>
+        </div>
+
+        <button type="submit" class="auth-submit" id="submitBtn">Log In</button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="signup.html">Create one</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/services/storage-service.js"></script>
+  <script src="../js/services/auth-service.js"></script>
+  <script src="../js/services/auth-ui.js"></script>
+</body>
+</html>
